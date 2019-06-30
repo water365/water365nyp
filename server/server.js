@@ -70,16 +70,115 @@ app.get('/', cors(corsOptions), function (req, res) {
     });
 });
 
-app.get('/students', cors(corsOptions), function (req, res) {
+
+// getting all users from database
+
+app.get('/users', cors(corsOptions), function (request, response) {
     console.log('connected to students');
-    db.query('select * from `Usage`;', function (err, res, fields) {
-        if (err) {
-            console.log('error: ', err);
-            throw err;
+    db.query('select * from Users;', function (err2, result, fields) {
+        if (!err2) {
+            console.log("result");
+            var string = JSON.stringify(result);
+            var json = JSON.parse(string);
+            console.log(json);
+            response.send(json);
+        } else {
+            console.log(err2);
         }
-        var string = JSON.stringify(result);
-        var json = JSON.parse(string);
-        console.log(json);
-        res.send(json);
+    });
+});
+
+// getting specific user from users table 
+
+app.get('/users/:id', cors(corsOptions), function (request, response) {
+    console.log('connected to students');
+    var id = request.params.id;
+    var sql = "SELECT * FROM Users WHERE userid = ?";
+    db.query(sql, id, function (err2, result, fields) {
+        if (!err2) {
+            console.log("result");
+            var string = JSON.stringify(result);
+            var json = JSON.parse(string);
+            console.log(json);
+            response.send(json);
+        } else {
+            console.log(err2);
+        }
+    });
+});
+
+// getting all water usage data of specific user from database
+
+app.get('/users/:id/usage', cors(corsOptions), function (request, response) {
+    console.log('connected to students');
+    var id = request.params.id;
+    var sql = "SELECT * FROM `Usage` WHERE userid = ?";
+    db.query(sql, id, function (err2, result, fields) {
+        if (!err2) {
+            console.log("result");
+            var string = JSON.stringify(result);
+            var json = JSON.parse(string);
+            console.log(json);
+            response.send(json);
+        } else {
+            console.log(err2);
+        }
+    });
+});
+
+// getting all water usage records from database
+
+app.get('/usages', cors(corsOptions), function (request, response) {
+    console.log('connected to students');
+    var sql = "SELECT * FROM `Usage`;";
+    db.query(sql, function (err2, result, fields) {
+        if (!err2) {
+            console.log("result");
+            var string = JSON.stringify(result);
+            var json = JSON.parse(string);
+            console.log(json);
+            response.send(json);
+        } else {
+            console.log(err2);
+        }
+    });
+});
+
+// getting specific usage data from database
+
+app.get('/usage/:id', cors(corsOptions), function (request, response) {
+    console.log('connected to students');
+    var id = request.params.id;
+    var sql = "SELECT * FROM `Usage` WHERE usage_id = ?";
+    db.query(sql, id, function (err2, result, fields) {
+        if (!err2) {
+            console.log("result");
+            var string = JSON.stringify(result);
+            var json = JSON.parse(string);
+            console.log(json);
+            response.send(json);
+        } else {
+            console.log(err2);
+        }
+    });
+});
+
+// using for login process on app by authenticating username and password
+
+app.post('/login', cors(corsOptions), function (request, response) {
+    console.log('on login page');
+    var username = request.body.username;
+    var password = request.body.password;
+    console.log(username);
+    var sql = "SELECT * FROM Users WHERE username = ? AND `password` = ?";
+    db.query(sql, [username, password], function (err, result, fields) {
+        if (err) {
+            throw err;
+        } else {
+            var string = JSON.stringify(result);
+            var json = JSON.parse(string);
+            console.log(json);
+            response.send(json);
+        }
     });
 });
